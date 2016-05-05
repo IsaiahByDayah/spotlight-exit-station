@@ -28,13 +28,15 @@ socket.on('connect', function(){
 
 	if (noble.state == "poweredOn") {
 		console.log(config.side + " exit starting to scan...");
-		noble.startScanning([], true);
+		//noble.startScanning([], true);
+		noble.startScanning();
 	}
 	noble.on('stateChange', function(state) {
 		console.log("Noble state changed...");
 		if (state === 'poweredOn') {
 			console.log(config.side + " exit starting to scan...");
-			noble.startScanning([], true);
+			//noble.startScanning([], true);
+			noble.startScanning();
 		} else {
 			noble.stopScanning();
 			console.log(config.side + " exit stopped scanning.");
@@ -111,9 +113,7 @@ noble.on('discover', function(peripheral) {
 					});
 
 					// Set LED to green
-					wearable.sendMessage("SetLights", {
-						color: "00FF00"
-					});
+					wearable.setColor(0, 255, 0);
 				}
 			}
 
