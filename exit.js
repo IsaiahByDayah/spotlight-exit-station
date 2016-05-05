@@ -113,6 +113,7 @@ noble.on('discover', function(peripheral) {
 					});
 
 					// Set LED to green
+					wearable.sendMessage("UpdateLED", 0);
 					wearable.setColor(0, 255, 0);
 				}
 			}
