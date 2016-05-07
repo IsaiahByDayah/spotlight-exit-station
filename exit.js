@@ -13,33 +13,36 @@ var socket = require('socket.io-client')(CONSTANTS.SERVER_ENDPOINT);
 // console.log(Feather);
 // console.log(Feather().isFeather);
 
-var activeWearable = null;
+var activeWearables = {
+	LEFT: null,
+	RIGHT: null
+};
 
 socket.on('connect', function(){
-	console.log(config.side + " exit connected to socket.");
+	console.log("exit connected to socket.");
 
-	if (CONSTANTS.SEND_EXAMPLE_USER_EXIT) {
-		console.log("Sending sample user exit...");
-		socket.emit("UserExit", {
-			exit: config.side,
-			userID: "Jon"
-		});
-	}
+	// if (CONSTANTS.SEND_EXAMPLE_USER_EXIT) {
+	// 	console.log("Sending sample user exit...");
+	// 	socket.emit("UserExit", {
+	// 		exit: config.side,
+	// 		userID: "Jon"
+	// 	});
+	// }
 
 	if (noble.state == "poweredOn") {
-		console.log(config.side + " exit starting to scan...");
+		console.log("exit starting to scan...");
 		//noble.startScanning([], true);
 		noble.startScanning();
 	}
 	noble.on('stateChange', function(state) {
 		console.log("Noble state changed...");
 		if (state === 'poweredOn') {
-			console.log(config.side + " exit starting to scan...");
+			console.log("exit starting to scan...");
 			//noble.startScanning([], true);
 			noble.startScanning();
 		} else {
 			noble.stopScanning();
-			console.log(config.side + " exit stopped scanning.");
+			console.log("exit stopped scanning.");
 		}
 	});
 });
@@ -102,13 +105,28 @@ noble.on('discover', function(peripheral) {
 
 			if (rssi > CONSTANTS.MINIMUM_RSSI_TO_TRIGGER_EXIT) {
 
-				if (activeWearable == null) {
+				if (activeWearables.LEFT == null) {
 					// Set wearable to be active
-					activeWearable = wearable;
+					activeWearables.LEFT = wearable;
 
 					// Trigger user to go through exit experience
 					socket.emit("UserExit", {
-						exit: config.side,
+						exit: "LEFT",
+						userID: wearable._userID
+					});
+
+					// Set LED to green
+					wearable.sendMessage("UpdateLED", 0);
+					wearable.setColor(0, 255, 0);
+				}
+
+				else if (activeWearables.RIGHT == null) {
+					// Set wearable to be active
+					activeWearables.RIGHT = wearable;
+
+					// Trigger user to go through exit experience
+					socket.emit("UserExit", {
+						exit: "RIGHT",
 						userID: wearable._userID
 					});
 
@@ -118,7 +136,14 @@ noble.on('discover', function(peripheral) {
 				}
 			}
 
-			if (wearable._userID == activeWearable._userID) {
+			if (activeWearables.LEFT && wearable._userID == activeWearables.LEFT._userID) {
+				if (rssi < CONSTANTS.MINIMUM_RSSI_TO_CONTINUE_EXIT) {
+					wearable.sendMessage("ShutDown", {});
+					wearable.disconnect();
+				}
+			}
+
+			if (activeWearables.RIGHT && wearable._userID == activeWearables.RIGHT._userID) {
 				if (rssi < CONSTANTS.MINIMUM_RSSI_TO_CONTINUE_EXIT) {
 					wearable.sendMessage("ShutDown", {});
 					wearable.disconnect();
@@ -135,10 +160,16 @@ noble.on('discover', function(peripheral) {
 
 			console.log("\t\tWearable disconnected!");
 
-			if (wearable._userID == activeWearable._userID) {
+			if (activeWearables.LEFT && wearable._userID == activeWearables.LEFT._userID) {
 				// Active user disconnected
 				console.log("Current user finished with exit experience.");
-				activeWearable = null;
+				activeWearables.LEFT = null;
+			}
+
+			if (activeWearables.RIGHT && wearable._userID == activeWearables.RIGHT._userID) {
+				// Active user disconnected
+				console.log("Current user finished with exit experience.");
+				activeWearables.RIGHT = null;
 			}
 		});
 
