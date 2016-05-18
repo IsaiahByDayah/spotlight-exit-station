@@ -1,6 +1,6 @@
 # spotlight-exit-station
 
-##### Raspberry Pi systems that communicate with [Spotlight Wearables](https://github.com/jordankid93/spotlight-wearable) for tracking user's experiences through a museum
+##### Raspberry Pi systems that communicate with [Spotlight Wearables](https://github.com/jordankid93/spotlight-wearable) for ending a user's experiences through a museum
 
 ### Description:
 The spotlight exhit station is a Node.js application you can run on any compatible device such as a laptop, desktop or microcomputer that will allow users to end their experience through the museum and trigger the biggining of their exit experience where they can dive deeper into their time with the exhibits, see what attracted their attention the most, and find out more about info about artists, bands, and music they love. 
