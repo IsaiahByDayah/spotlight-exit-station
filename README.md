@@ -22,7 +22,7 @@ The spotlight exit station is a Node.js application you can run on any compatibl
 
 ### Usage:
 To get up and running with a Spotlight exit station, clone this repo on the device you want to use and install the required node modules:
-```
+```shell
 git clone https://github.com/jordankid93/spotlight-exit-station.git
 cd spotlight-exit-station
 npm install
@@ -31,7 +31,7 @@ npm install
 Once modules have been installed, edit the config.js file so that the exit station is making the appropriate calls with the backend.
 
 Once done, simply run the application via npm or node directly
-```
+```shell
 npm start // Via npm
 node exit.js // Node directly
 ```
