@@ -28,7 +28,7 @@ cd spotlight-exit-station
 npm install
 ```
 
-Once modules have been installed, edit the config.js file so that the exhibit is making the appropriate calls with the backend.
+Once modules have been installed, edit the config.js file so that the exit station is making the appropriate calls with the backend.
 
 Once done, simply run the application via npm or node directly
 ```
